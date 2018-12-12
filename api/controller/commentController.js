@@ -39,7 +39,9 @@ exports.getCommentForContent = (req, res, next) =>{
 
 exports.postCommentToContent = (req, res, next) =>{
     const contentID = req.params.contentID;
-    Content.find({_id: contentID})
+    console.log(contentID);
+    Content.find({_id: req.params.contentID})
+        .select('_id')
         .then(content =>{
             if(!content){
                 return res.status(404).json({
@@ -62,7 +64,7 @@ exports.postCommentToContent = (req, res, next) =>{
                 createdComment:{
                     _id: result._id,
                     user: result.user,
-                    content: result.content,
+                    contentID: result.content,
                     comment: result.message,
                     commentTime: result.commentTime
                 }

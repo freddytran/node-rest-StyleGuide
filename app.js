@@ -3,6 +3,7 @@ const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const cors = require('cors');
 
 const userRoutes = require('./api/routes/users');
 const contentRoutes = require('./api/routes/contents');
@@ -17,17 +18,19 @@ const commentRoutes = require('./api/routes/comments');
 * */
 mongoose.connect(
     'mongodb://FreddyTran:' +
-    process.env.MONGO_ATLAS_PW + '@cluster0-shard-00-00-xv50r.mongodb.net:27017,cluster0-shard-00-01-xv50r.mongodb.net:27017,cluster0-shard-00-02-xv50r.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true',
+    process.env.MONGO_ATLAS_PW + '@cluster0-shard-00-00-xv50r.mongodb.net:27017,cluster0-shard-00-01-xv50r.mongodb.net:27017,cluster0-shard-00-02-xv50r.mongodb.net:27017/StyleGuide?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true',
     {
         useNewUrlParser: true
     }
 );
 
 /*
-* Um die Default Promis Implementation zu benutzen.
+* Um die Default Promis Implementation zu benutzen. TEST IST UPDATED????
 *
 * */
 mongoose.Promise = global.Promise;
+
+// app.use(cors());
 
 app.use(morgan('dev'));
 
@@ -40,9 +43,9 @@ app.use(bodyParser.json());
 
 
 //Um die API Cors Kompatibel zu machen muss der Zugriff sozusagen für andere Clients gewährt werden. Dies geht mit Headern
-app.use((req, res, next)=>{
+app.use(function(req, res, next){
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access.Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Headers','Origin, X-Requested-With, Content-Type, Accept, Authorization');
     if(req.method === 'OPTIONS'){
         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
         return res.status(200).json({});

@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const User = require('../models/user');
 const checkAuth = require('../middleware/check-auth');
 const multer = require('multer');
 const userController = require('../controller/userController');
+const bcrypt = require('bcryptjs');
 
 /*
 * Mit multer.diskStorage kann verwaltet werden wie Dateien gespeichert werden.
@@ -54,6 +56,10 @@ router.post('/', upload.single('avatar'), userController.postUser);
 router.get('/:userID',  userController.getSpecificUser);
 
 router.patch('/:userID', userController.patchSpecificUser);
+
+router.post('/signUp', userController.userSignUp);
+
+router.post('/login', userController.userLogin);
 
 router.delete('/:userID', userController.deleteUser);
 

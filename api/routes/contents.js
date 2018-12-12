@@ -1,5 +1,4 @@
-
-
+const checkAuth = require('../middleware/check-auth');
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
