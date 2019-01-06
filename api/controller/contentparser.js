@@ -1,6 +1,8 @@
 const Content = require('../models/content');
+const Comment = require('../models/comment');
 const User = require('../models/user');
 const mongoose = require('mongoose');
+const commentController = require('../controller/commentController');
 
 /*
 * In diesem Controller werden alle Posts von dem gesuchten User ausgegeben. Als erstes wird eine variable mit der
@@ -59,15 +61,73 @@ exports.deleteContent = (req, res, next)=>{
 };
 
 exports.getAllContents = (req, res, next) =>{
+    const belongArr = [];
+    let commArr = [];
     Content.find()
         .select('user _id comment metaInfo contentTitle clothInfo contentImage time')
-        .populate('user', '_id userName email')
+        .populate('user', '_id userName comment email')
         .exec()
-        .then(docs =>{
-            console.log(docs);
+        .then(docs => {
             res.status(200).json({
                 count: docs.length,
                 posts: docs.map(doc =>{
+                    return{
+                        user: doc.user,
+                        contentID: doc._id,
+                        contentTitle: doc.contentTitle,
+                        contentTime: doc.time,
+                        contentImage: doc.contentImage,
+                        metaInfo: doc.metaInfo,
+                        clothInfo: doc.clothInfo,
+                        comment: Comment.find({content: doc._id})
+                            .exec()
+                            .then(results =>{
+                                console.log(results);
+                                return results
+                                /*results.map(result =>{
+                                    return {
+                                        commentID: result._id,
+                                        commentUser: result.user,
+                                        commentTime: result.time,
+                                        userComment: result.userComment
+                                    }
+                                });*/
+                            })
+                            .catch(err =>{
+                                res.status(500).json({
+                                    message: 'Comment.find Hat probleme',
+                                    err: err
+                                })
+                            })
+                    }
+                })
+            })
+
+            /*res.status(200).json({
+                count: docs.length,
+                posts: docs.map(doc => {
+                    /!*commentController.getBelongingComments("" + doc._id)
+                        .then(res => {
+                            console.log('ContentTitle ' + doc.contentTitle);
+                            console.log('ContentTime ' + doc.time);
+                            commArr = res;
+                        })
+                        .catch(err => {
+                            res.status(500).json({
+                                message: 'SUPERERROR'
+                            })
+                        });*!/
+                    commentController.getBelongingComments("" + doc._id)
+                        .exec()
+                        .then(result =>{
+                                console.log('KJKJKJKJ ' + result)
+                            })
+                        .catch(err=>{
+                            res.status(500).json({
+                                message: 'Bis hier hin und nicht weiter',
+                                error: err
+                            })
+                        });
                     return {
                         user: doc.user,
                         contentID: doc._id,
@@ -76,16 +136,20 @@ exports.getAllContents = (req, res, next) =>{
                         contentImage: doc.contentImage,
                         metaInfo: doc.metaInfo,
                         clothInfo: doc.clothInfo,
-                        comments: doc.comment
+                        comments: 'Platzhalter'
                     }
                 })
-            })
+            })*/
         })
-        .catch(err =>{
+        .catch(err => {
             res.status(500).json({
                 error: err
             })
         })
+
+    /*Promise.all([
+        Content.find()
+    ])*/
 };
 
 /*

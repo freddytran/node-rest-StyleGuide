@@ -8,13 +8,10 @@ const contentSchema = mongoose.Schema({
         required: true
     },
 
-    comment:{
-        type: Array,
-        userComment: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Comment'
-        }]
-    },
+    /*comment:{type: mongoose.Schema.Types.ObjectId,
+            ref: 'Comment'},*/
+    comment:[],
+
 
     metaInfo:[{
         likes: Number,

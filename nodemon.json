@@ -1,6 +1,6 @@
 {
   "env": {
-    "MONGO_ATLAS_PW": "Mickymaus1",
+    "MONGO_ATLAS_PW": "eigenes MongoAtlas PW",
     "JWT_KEY": "secret"
   }
 }

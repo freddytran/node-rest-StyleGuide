@@ -1,6 +1,7 @@
 const Content = require('../models/content');
 const Comment = require('../models/comment');
 const mongoose = require('mongoose');
+const contentParser = require('../controller/contentparser');
 
 exports.getCommentForContent = (req, res, next) =>{
     const contentID = req.params.contentID;
@@ -48,14 +49,14 @@ exports.postCommentToContent = (req, res, next) =>{
                     message: 'Content not Found!'
                 });
             }
-            const comment = new Comment({
+            const userComment = new Comment({
                 _id: mongoose.Types.ObjectId(),
                 user: req.body.userID,
                 content: contentID,
                 commentTime: new Date(),
                 userComment: req.body.userComment
             });
-            return comment.save()
+            return userComment.save()
         })
         .then(result =>{
             console.log(result);
@@ -93,6 +94,28 @@ exports.deleteComment = (req, res, next)=>{
         })
         .catch(err =>{
             res.status(500).json({
+                error: err
+            })
+        });
+};
+
+exports.getBelongingComments = (req, res, next) =>{
+    /*console.log("HIER SIND IST DIE LOG VON getBelongningComments" + req);*/
+    const contentID = req;
+    let commArr = [];
+    Comment.find({content: contentID})
+        .select('user _id userComment content commentTime')
+        .exec()
+        .then(results =>{
+           if(results.length > 0){
+               return results
+           }else{
+               return commArr
+           }
+        })
+        .catch(err =>{
+            res.status(500).json({
+                message: 'Gab Fehler bei getBelonging Comments',
                 error: err
             })
         });
